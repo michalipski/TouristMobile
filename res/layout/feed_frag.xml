@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/fragment_content">
+
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:weightSum="1.0">
+
+            <TextView
+                    android:id="@+id/title_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="50sp"
+                    android:layout_marginTop="10dp"
+                    android:text="TITLE"/>
+
+            <TextView
+                    android:id="@+id/address_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="25sp"
+                    android:textStyle="italic"
+                    android:layout_marginTop="5dp"
+                    android:text="ADDRESS"
+                    />
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="OPEN HOURS"/>
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                          android:layout_width="fill_parent"
+                          android:layout_height="fill_parent"
+                          android:orientation="horizontal"
+                          android:weightSum="1" >
+
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/openhour_view"
+                        android:layout_weight="0.5"
+                        android:textSize="20sp"
+                        android:gravity="center"/>
+
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/closehour_view"
+                        android:layout_weight="0.5"
+                        android:textSize="20sp"
+                        android:gravity="center"/>
+            </LinearLayout>
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/grade_view"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    android:text="GRADE"/>
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="DESCRIPTION"
+                    android:textSize="20sp"
+                    android:id="@+id/description_view"/>
+
+        </LinearLayout>
+    </ScrollView>
