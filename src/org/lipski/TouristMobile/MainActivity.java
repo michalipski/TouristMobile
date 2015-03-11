@@ -5,7 +5,6 @@ import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.StreamCorruptedException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import android.app.Activity;
@@ -22,7 +21,8 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 
 public class MainActivity extends Activity {
-    Button button;
+    Button buttonPlace;
+    Button buttonEvent;
     private static final int REQUEST_ENABLE_BT = 1;
     private BluetoothAdapter btAdapter = null;
     private BluetoothSocket btSocket = null;
@@ -38,74 +38,33 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        button = (Button) findViewById(R.id.button);
+        buttonPlace = (Button) findViewById(R.id.showOnMapPlace);
+        buttonEvent = (Button) findViewById(R.id.button2);
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         CheckBTState();
-        button.setOnClickListener(new View.OnClickListener() {
+        buttonEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BluetoothDevice device = btAdapter.getRemoteDevice(address);
+                ArrayList<String> eventsList = getListOfObjects("eventlist");
+                Intent listIntent = new Intent(MainActivity.this, PlaceListActivity.class);
+                Bundle eventList = new Bundle();
+                eventList.putStringArrayList("list", eventsList);
+                eventList.putString("type","event");
+                listIntent.putExtras(eventList);
+                startActivity(listIntent);
+            }
+        });
 
-                try {
-                    btSocket = device.createRfcommSocketToServiceRecord(MY_UUID);
-                } catch (IOException e) {
-                    AlertBox("Fatal Error", "In onResume() and socket create failed: " + e.getMessage() + ".");
-                }
-
-                btAdapter.cancelDiscovery();
-
-                try {
-                    btSocket.connect();
-                } catch (IOException e) {
-                    try {
-                        btSocket.close();
-                    } catch (IOException e2) {
-                        AlertBox("Fatal Error", "In onResume() and unable to close socket during connection failure" + e2.getMessage() + ".");
-                    }
-                }
-
-                try {
-                    outStream = btSocket.getOutputStream();
-                } catch (IOException e) {
-                    AlertBox("Fatal Error", "In onResume() and output stream creation failed:" + e.getMessage() + ".");
-                }
-
-                String message = "list\n";
-                byte[] msgBuffer = message.getBytes();
-                try {
-                    outStream.write(msgBuffer);
-                } catch (IOException e) {
-                    String msg = "In onResume() and an exception occurred during write: " + e.getMessage();
-                    AlertBox("Fatal Error", msg);
-                }
-                try {
-                    ObjectInputStream objectInputStream = new ObjectInputStream(btSocket.getInputStream());
-                    ArrayList<String> test = (ArrayList<String>) objectInputStream.readObject();
-                    Intent listIntent = new Intent(MainActivity.this, PlaceListActivity.class);
-                    Bundle placeList = new Bundle();
-                    placeList.putStringArrayList("list",test);
-                    listIntent.putExtras(placeList);
-                    startActivity(listIntent);
-                } catch (StreamCorruptedException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-                if (outStream != null) {
-                    try {
-                        outStream.flush();
-                    } catch (IOException e) {
-                        AlertBox("Fatal Error", "In onPause() and failed to flush output stream: " + e.getMessage() + ".");
-                    }
-                }
-
-                try     {
-                    btSocket.close();
-                } catch (IOException e2) {
-                    AlertBox("Fatal Error", "In onPause() and failed to close socket." + e2.getMessage() + ".");
-                }
+        buttonPlace.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<String> placesList = getListOfObjects("placelist");
+                Intent listIntent = new Intent(MainActivity.this, PlaceListActivity.class);
+                Bundle placeList = new Bundle();
+                placeList.putStringArrayList("list", placesList);
+                placeList.putString("type","place");
+                listIntent.putExtras(placeList);
+                startActivity(listIntent);
             }
         });
     }
@@ -166,5 +125,66 @@ public class MainActivity extends Activity {
                     public void onClick(DialogInterface arg0, int arg1) {
                     }
                 }).show();
+    }
+
+    private ArrayList<String> getListOfObjects(String objectType) {
+        BluetoothDevice device = btAdapter.getRemoteDevice(address);
+        ArrayList<String> objectList = new ArrayList<String>();
+        try {
+            btSocket = device.createRfcommSocketToServiceRecord(MY_UUID);
+        } catch (IOException e) {
+            AlertBox("Fatal Error", "In onResume() and socket create failed: " + e.getMessage() + ".");
+        }
+
+        btAdapter.cancelDiscovery();
+
+        try {
+            btSocket.connect();
+        } catch (IOException e) {
+            try {
+                btSocket.close();
+            } catch (IOException e2) {
+                AlertBox("Fatal Error", "In onResume() and unable to close socket during connection failure" + e2.getMessage() + ".");
+            }
+        }
+
+        try {
+            outStream = btSocket.getOutputStream();
+        } catch (IOException e) {
+            AlertBox("Fatal Error", "In onResume() and output stream creation failed:" + e.getMessage() + ".");
+        }
+        String message = objectType + "\n";
+
+        byte[] msgBuffer = message.getBytes();
+        try {
+            outStream.write(msgBuffer);
+        } catch (IOException e) {
+            String msg = "In onResume() and an exception occurred during write: " + e.getMessage();
+            AlertBox("Fatal Error", msg);
+        }
+        try {
+            ObjectInputStream objectInputStream = new ObjectInputStream(btSocket.getInputStream());
+            objectList = (ArrayList<String>) objectInputStream.readObject();
+        } catch (StreamCorruptedException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        if (outStream != null) {
+            try {
+                outStream.flush();
+            } catch (IOException e) {
+                AlertBox("Fatal Error", "In onPause() and failed to flush output stream: " + e.getMessage() + ".");
+            }
+        }
+
+        try {
+            btSocket.close();
+        } catch (IOException e2) {
+            AlertBox("Fatal Error", "In onPause() and failed to close socket." + e2.getMessage() + ".");
+        }
+        return objectList;
     }
 }

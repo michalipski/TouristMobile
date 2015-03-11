@@ -4,7 +4,7 @@ public class UserSession {
 
     private static Integer userId;
     private static String username= "mlipski";
-    private static Boolean isLoggedIn=false;
+    private static Boolean isLoggedIn=true;
 
     public static Integer getUserId() {
         return userId;

@@ -7,11 +7,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import org.lipski.TouristMobile.R;
 
-public class PlacesFragment extends ListFragment {
+public class ItemsFragment extends ListFragment {
 
-    private String[] placesArray;
+    private String[] itemsArray;
 
     public interface SelectionListener {
         public void onItemSelected(int position);
@@ -30,7 +29,7 @@ public class PlacesFragment extends ListFragment {
                 : android.R.layout.simple_list_item_1;
 
         // Set the list adapter for this ListFragment
-        setListAdapter(new ArrayAdapter<String>(getActivity(), layout, placesArray));
+        setListAdapter(new ArrayAdapter<String>(getActivity(), layout, itemsArray));
     }
 
 
@@ -87,11 +86,11 @@ public class PlacesFragment extends ListFragment {
 
     }
 
-    public String[] getPlacesArray() {
-        return placesArray;
+    public String[] getItemsArray() {
+        return itemsArray;
     }
 
-    public void setPlacesArray(String[] placesArray) {
-        this.placesArray = placesArray;
+    public void setItemsArray(String[] itemsArray) {
+        this.itemsArray = itemsArray;
     }
 }

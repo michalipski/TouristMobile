@@ -7,24 +7,31 @@ import android.os.Bundle;
 
 import java.util.ArrayList;
 
-public class PlaceListActivity extends Activity implements PlacesFragment.SelectionListener{
+public class PlaceListActivity extends Activity implements ItemsFragment.SelectionListener{
 
-    private PlacesFragment mFriendsFragment;
-    private FeedFragment mFeedFragment;
+    private ItemsFragment mFriendsFragment;
+    private PlaceFragment mPlaceFragment;
+    private EventFragment mEventFragment;
 
-    private ArrayList<String> places;
+    private ArrayList<String> objects;
+    private String objectType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment);
-        places = getIntent().getExtras().getStringArrayList("list");
+        objects = getIntent().getExtras().getStringArrayList("list");
+        objectType = getIntent().getExtras().getString("type");
+        if(objectType.equals("place")) {
+            setContentView(R.layout.fragment);
+        } else {
+            setContentView(R.layout.event_fragment);
+        }
         // If the layout is single-pane, create the FriendsFragment
         // and add it to the Activity
 
         if (!isInTwoPaneMode()) {
-            mFriendsFragment = new PlacesFragment();
-            mFriendsFragment.setPlacesArray(getPlacesNamesArray(places));
+            mFriendsFragment = new ItemsFragment();
+            mFriendsFragment.setItemsArray(getObjectsNamesArray(objects));
 
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -32,8 +39,14 @@ public class PlaceListActivity extends Activity implements PlacesFragment.Select
             fragmentTransaction.commit();
         } else {
             // Otherwise, save a reference to the FeedFragment for later use
-            mFeedFragment = (FeedFragment) getFragmentManager()
-                    .findFragmentById(R.layout.feed_frag);
+            if(objectType.equals("place")) {
+                mPlaceFragment = (PlaceFragment) getFragmentManager()
+                        .findFragmentById(R.layout.feed_frag);
+            } else {
+                mEventFragment = (EventFragment) getFragmentManager()
+                        .findFragmentById(R.layout.event_fragment);
+            }
+
         }
     }
 
@@ -50,30 +63,41 @@ public class PlaceListActivity extends Activity implements PlacesFragment.Select
 
         // If there is no FeedFragment instance, then create one
 
-        if (mFeedFragment == null)
-            mFeedFragment = new FeedFragment();
+        if (mPlaceFragment == null)
+            mPlaceFragment = new PlaceFragment();
+
+        if(mEventFragment == null)
+            mEventFragment = new EventFragment();
 
         // If in single-pane mode, replace single visible Fragment
 
         if (!isInTwoPaneMode()) {
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, mFeedFragment);
+            if(objectType.equals("place")) {
+                fragmentTransaction.replace(R.id.fragment_container, mPlaceFragment);
+            } else {
+                fragmentTransaction.replace(R.id.fragment_container, mEventFragment);
+            }
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
 
             getFragmentManager().executePendingTransactions();
         }
         // Update Twitter feed display on FriendFragment
-        mFeedFragment.updateFeedDisplay(places.get(position));
+        if(objectType.equals("place")) {
+            mPlaceFragment.updateFeedDisplay(objects.get(position));
+        } else {
+            mEventFragment.updateFeedDisplay(objects.get(position));
+        }
     }
 
-    private String[] getPlacesNamesArray(ArrayList<String> places) {
-        String[] placesArray = new String[places.size()];
-        for(String place:places) {
-            placesArray[places.indexOf(place)] = place;
+    private String[] getObjectsNamesArray(ArrayList<String> objects) {
+        String[] objectsArray = new String[objects.size()];
+        for(String object:objects) {
+            objectsArray[objects.indexOf(object)] = object;
         }
-        return placesArray;
+        return objectsArray;
     }
 
 }

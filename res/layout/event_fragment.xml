@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:id="@+id/fragment_container"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+    <ScrollView android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/fragment_content">
+
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="1.0">
+            <TextView android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                    android:id="@+id/eventName"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:id="@+id/eventDescription"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:id="@+id/eventDate"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:id="@+id/placeNameEvent"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:id="@+id/placeAddressEvent"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:id="@+id/placeCityEvent"/>
+            <Button android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:id="@+id/goToPlaceButton" android:text="Idz do miejsca"
+                    android:visibility="invisible"/>
+            <Button android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:id="@+id/showOnMapButton" android:text="Pokaz na mapie" android:visibility="invisible"/>
+
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>

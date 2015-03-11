@@ -1,5 +1,8 @@
 package org.lipski.TouristMobile;
 
+import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import android.app.Fragment;
@@ -8,14 +11,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import org.lipski.TouristMobile.dataAccess.PhotosBluetoothController;
 import org.lipski.TouristMobile.dataAccess.PlaceBluetoothController;
 import org.lipski.TouristMobile.session.UserSession;
 import org.lipski.place.model.Place;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class FeedFragment extends Fragment {
+public class PlaceFragment extends Fragment {
 
     private static final String TAG = "Place-View";
 
@@ -29,6 +34,8 @@ public class FeedFragment extends Fragment {
     private TextView mAddCommentTitle;
     private EditText mCommentEditText;
     private Button mAddCommentButton;
+    private Button mShowOnMap;
+    private Button mShowPhotos;
 
     private PlaceBluetoothController placeBluetoothController = new PlaceBluetoothController();
 
@@ -43,7 +50,7 @@ public class FeedFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
-    void updateFeedDisplay(final String placeName) {
+    public void updateFeedDisplay(final String placeName) {
         Log.i(TAG, "Entered updateFeedDisplay()");
         mTitleTextView = (TextView) getView().findViewById(R.id.title_view);
         mAddressTextView = (TextView) getView().findViewById(R.id.address_view);
@@ -55,6 +62,10 @@ public class FeedFragment extends Fragment {
         mAddCommentTitle = (TextView) getView().findViewById(R.id.addCommentTitle);
         mCommentEditText = (EditText) getView().findViewById(R.id.commentEditText);
         mAddCommentButton = (Button) getView().findViewById(R.id.commentButton);
+        mShowOnMap = (Button) getView().findViewById(R.id.showOnMapPlace);
+        mShowPhotos = (Button) getView().findViewById(R.id.showPhotosButton);
+        mShowOnMap.setVisibility(View.VISIBLE);
+        mShowPhotos.setVisibility(View.VISIBLE);
 
         final Place place = placeBluetoothController.getPlaceByName(placeName);
 
@@ -88,6 +99,32 @@ public class FeedFragment extends Fragment {
                 }
             }
         });
+
+        mShowOnMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String uri = "geo:0,0?q=" + place.getCity() + ", " + place.getAddress();
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                mapIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getActivity().getApplicationContext().startActivity(mapIntent);
+            }
+        });
+
+        mShowPhotos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PhotoFragment photoFragment = new PhotoFragment();
+
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+                transaction.replace(R.id.fragment_container, photoFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+                getFragmentManager().executePendingTransactions();
+                photoFragment.updateFeedDisplay(place.getName());
+            }
+        });
+
         if(UserSession.getIsLoggedIn()) {
             mRatingBar.setVisibility(View.VISIBLE);
             mAddCommentButton.setVisibility(View.VISIBLE);

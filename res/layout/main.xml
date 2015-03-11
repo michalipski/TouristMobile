@@ -11,8 +11,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Pobierz liste obieków"
-                android:id="@+id/button" android:layout_gravity="center_horizontal" android:layout_centerVertical="true"
+                android:id="@+id/showOnMapPlace" android:layout_gravity="center_horizontal" android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"/>
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pobierz liste wydarzen"
+                android:id="@+id/button2" android:layout_below="@+id/showOnMapPlace" android:layout_alignRight="@+id/showOnMapPlace"
+                android:layout_alignLeft="@+id/showOnMapPlace"/>
     </RelativeLayout>
 
 </LinearLayout>
